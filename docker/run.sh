@@ -18,15 +18,15 @@ find ./build/confluent -maxdepth 1 -type d ! -wholename "./build/confluent" -exe
 )
 
 echo "Starting docker ."
-docker-compose up -d --build
+sudo docker-compose up -d --build
 
 function clean_up {
     echo -e "\n\nSHUTTING DOWN\n\n"
     curl --output /dev/null -X DELETE http://localhost:8083/connectors/datagen-pageviews || true
     curl --output /dev/null -X DELETE http://localhost:8083/connectors/mongo-sink || true
     curl --output /dev/null -X DELETE http://localhost:8083/connectors/mongo-source || true
-    docker-compose exec mongo1 /usr/bin/mongo --eval "db.dropDatabase()"
-    docker-compose down
+    sudo docker-compose exec mongo1 /usr/bin/mongo --eval "db.dropDatabase()"
+    sudo docker-compose down
     if [ -z "$1" ]
     then
       echo -e "Bye!\n"
@@ -63,7 +63,7 @@ test_systems_available 8083
 trap clean_up EXIT
 
 echo -e "\nConfiguring the MongoDB ReplicaSet.\n"
-docker-compose exec mongo1 /usr/bin/mongo --eval '''if (rs.status()["ok"] == 0) {
+sudo docker-compose exec mongo1 /usr/bin/mongo --eval '''if (rs.status()["ok"] == 0) {
     rsconf = {
       _id : "rs0",
       members: [
@@ -134,7 +134,7 @@ echo -e "\nKafka Connectors: \n"
 curl -X GET "http://localhost:8083/connectors/" -w "\n"
 
 echo "Looking at data in 'db.pageviews':"
-docker-compose exec mongo1 /usr/bin/mongo --eval 'db.pageviews.find()'
+sudo docker-compose exec mongo1 /usr/bin/mongo --eval 'db.pageviews.find()'
 
 
 echo -e '''

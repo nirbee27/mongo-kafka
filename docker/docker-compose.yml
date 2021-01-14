@@ -5,11 +5,11 @@ services:
     hostname: zookeeper
     container_name: zookeeper
     ports:
-      - "2181:2181"
+      - "2181:2182"
     networks:
       - localnet
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_CLIENT_PORT: 2182
       ZOOKEEPER_TICK_TIME: 2000
 
   broker:
@@ -19,20 +19,20 @@ services:
     depends_on:
       - zookeeper
     ports:
-      - "29092:29092"
-      - "9092:9092"
+      - "29092:29093"
+      - "9092:9093"
     networks:
       - localnet
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2182'
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29093,PLAINTEXT_HOST://localhost:9093
       KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: broker:29092
-      CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: zookeeper:2181
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: broker:29093
+      CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: zookeeper:2182
       CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
       CONFLUENT_METRICS_ENABLE: 'true'
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
@@ -50,7 +50,7 @@ services:
       - localnet
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2182'
 
   connect:
     image: confluentinc/kafka-connect-datagen:latest # Dockerfile loads cp-kafka-connect:5.3.0
@@ -68,7 +68,7 @@ services:
     networks:
       - localnet
     environment:
-      CONNECT_BOOTSTRAP_SERVERS: 'broker:29092'
+      CONNECT_BOOTSTRAP_SERVERS: 'broker:29093'
       CONNECT_REST_ADVERTISED_HOST_NAME: connect
       CONNECT_REST_PORT: 8083
       CONNECT_GROUP_ID: compose-connect-group
@@ -88,7 +88,7 @@ services:
       CONNECT_LOG4J_ROOT_LOGLEVEL: "INFO"
       CONNECT_LOG4J_LOGGERS: "org.apache.kafka.connect.runtime.rest=WARN,org.reflections=ERROR,com.mongodb.kafka=DEBUG"
       CONNECT_PLUGIN_PATH: /usr/share/confluent-hub-components
-      CONNECT_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      CONNECT_ZOOKEEPER_CONNECT: 'zookeeper:2182'
       # Assumes image is based on confluentinc/kafka-connect-datagen:latest which is pulling 5.3.0 Connect image
       CLASSPATH: /usr/share/java/monitoring-interceptors/monitoring-interceptors-5.3.0.jar
       CONNECT_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
@@ -112,8 +112,8 @@ services:
     networks:
       - localnet
     environment:
-      CONTROL_CENTER_BOOTSTRAP_SERVERS: 'broker:29092'
-      CONTROL_CENTER_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: 'broker:29093'
+      CONTROL_CENTER_ZOOKEEPER_CONNECT: 'zookeeper:2182'
       CONTROL_CENTER_CONNECT_CLUSTER: 'connect:8083'
       CONTROL_CENTER_KSQL_URL: "http://ksql-server:8088"
       CONTROL_CENTER_KSQL_ADVERTISED_URL: "http://localhost:8088"
@@ -138,7 +138,7 @@ services:
     environment:
       KSQL_CONFIG_DIR: "/etc/ksql"
       KSQL_LOG4J_OPTS: "-Dlog4j.configuration=file:/etc/ksql/log4j-rolling.properties"
-      KSQL_BOOTSTRAP_SERVERS: "broker:29092"
+      KSQL_BOOTSTRAP_SERVERS: "broker:29093"
       KSQL_HOST_NAME: ksql-server
       KSQL_APPLICATION_ID: "cp-all-in-one"
       KSQL_LISTENERS: "http://0.0.0.0:8088"
@@ -171,7 +171,7 @@ services:
       - localnet
     environment:
       KAFKA_REST_HOST_NAME: rest-proxy
-      KAFKA_REST_BOOTSTRAP_SERVERS: 'broker:29092'
+      KAFKA_REST_BOOTSTRAP_SERVERS: 'broker:29093'
       KAFKA_REST_LISTENERS: "http://0.0.0.0:8082"
       KAFKA_REST_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
 
@@ -201,7 +201,7 @@ services:
     networks:
       - localnet
     ports:
-      - "27017:27017"
+      - "27017:27018"
     restart: always
   mongo2:
     image: "mongo:4.0-xenial"
@@ -212,7 +212,7 @@ services:
     networks:
       - localnet
     ports:
-      - "27018:27017"
+      - "27018:27018"
     restart: always
   mongo3:
     image: "mongo:4.0-xenial"
@@ -223,7 +223,7 @@ services:
     networks:
       - localnet
     ports:
-      - "27019:27017"
+      - "27019:27018"
     restart: always
 
 networks:

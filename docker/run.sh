@@ -2,8 +2,8 @@
 
 set -e
 (
-if lsof -Pi :27017 -sTCP:LISTEN -t >/dev/null ; then
-    echo "Please terminate the local mongod on 27017"
+if lsof -Pi :27018 -sTCP:LISTEN -t >/dev/null ; then
+    echo "Please terminate the local mongod on 27018"
     exit 1
 fi
 )
@@ -67,9 +67,9 @@ docker-compose exec mongo1 /usr/bin/mongo --eval '''if (rs.status()["ok"] == 0) 
     rsconf = {
       _id : "rs0",
       members: [
-        { _id : 0, host : "mongo1:27017", priority: 1.0 },
-        { _id : 1, host : "mongo2:27017", priority: 0.5 },
-        { _id : 2, host : "mongo3:27017", priority: 0.5 }
+        { _id : 0, host : "mongo1:27018", priority: 1.0 },
+        { _id : 1, host : "mongo2:27018", priority: 0.5 },
+        { _id : 2, host : "mongo3:27018", priority: 0.5 }
       ]
     };
     rs.initiate(rsconf);
@@ -108,7 +108,7 @@ curl -X POST -H "Content-Type: application/json" --data '
      "connector.class":"com.mongodb.kafka.connect.MongoSinkConnector",
      "tasks.max":"1",
      "topics":"pageviews",
-     "connection.uri":"mongodb://mongo1:27017,mongo2:27017,mongo3:27017",
+     "connection.uri":"mongodb://mongo1:27018,mongo2:27018,mongo3:27018",
      "database":"test",
      "collection":"pageviews",
      "key.converter": "org.apache.kafka.connect.storage.StringConverter",
@@ -123,7 +123,7 @@ curl -X POST -H "Content-Type: application/json" --data '
    "config": {
      "tasks.max":"1",
      "connector.class":"com.mongodb.kafka.connect.MongoSourceConnector",
-     "connection.uri":"mongodb://mongo1:27017,mongo2:27017,mongo3:27017",
+     "connection.uri":"mongodb://mongo1:27018,mongo2:27018,mongo3:27018",
      "topic.prefix":"mongo",
      "database":"test",
      "collection":"pageviews"

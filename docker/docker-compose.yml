@@ -53,7 +53,7 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2182'
 
   connect:
-    image: confluentinc/kafka-connect-datagen:latest # Dockerfile loads cp-kafka-connect:5.3.0
+    image: confluentinc/cp-kafka-connect:5.3.0 # Dockerfile loads cp-kafka-connect:5.3.0
     build:
       context: .
       dockerfile: Dockerfile
